@@ -30,7 +30,7 @@ namespace DesafioFinal.Infrastructure.Repositories
                     Id = c.Id,
                     Nome = c.Nome,
                     Email = c.Email
-                })
+                }).OrderBy(c => c.Id)
                 .ToListAsync();
         }
 

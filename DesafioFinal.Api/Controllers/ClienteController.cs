@@ -1,23 +1,46 @@
 ﻿using DesafioFinal.Core.DTOs;
 using DesafioFinal.Core.Logic.Interfaces.Services;
+using DesafioFinal.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Text.Json.Serialization;
 
 namespace DesafioFinal.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/clientes")]
     [ApiController]
-    [Produces(MediaTypeNames.Application.Json)] 
-    public class ClienteController : ControllerBase
+    [Produces(MediaTypeNames.Application.Json)]
+    public class ClientesController : ControllerBase
     {
         private readonly IClienteService _clienteService;
 
-        public ClienteController(IClienteService clienteService)
+        public ClientesController(IClienteService clienteService)
         {
             _clienteService = clienteService;
         }
 
         #region CRUD
+
+        /// <summary>
+        /// Retorna todos os clientes cadastrados.
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ClienteDto>>> GetAllAsync()
+        {
+            try
+            {
+                var clientes = await _clienteService.GetAllClientesAsync();
+
+                if (clientes == null || !clientes.Any())
+                    return NoContent(); // 204 No Content caso não existam clientes
+
+                return Ok(clientes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro ao obter clientes: {ex.Message}");
+            }
+        }
 
         /// <summary>
         /// Retorna um cliente pelo ID.
@@ -51,18 +74,18 @@ namespace DesafioFinal.Api.Controllers
             {
                 var clienteCriado = await _clienteService.AddClienteAsync(clienteDto);
 
-                return CreatedAtAction(nameof(GetByIdAsync), new { id = clienteCriado.Id }, clienteCriado);
+
+                return Created($"/api/cliente/{clienteCriado.Id}", clienteCriado);
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Erro ao adicionar cliente. Tente novamente mais tarde.");
             }
         }
-
 
         /// <summary>
         /// Atualiza um cliente existente.
@@ -122,32 +145,11 @@ namespace DesafioFinal.Api.Controllers
             try
             {
                 var totalClientes = await _clienteService.GetTotalClientesAsync();
-                return Ok(totalClientes);
+                return Ok(new {count=totalClientes});
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Erro ao obter total de clientes: {ex.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Retorna todos os clientes cadastrados.
-        /// </summary>
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<ClienteDto>>> GetAllAsync()
-        {
-            try
-            {
-                var clientes = await _clienteService.GetAllClientesAsync();
-
-                if (clientes == null || !clientes.Any())
-                    return NoContent(); // Retorna 204 caso não haja clientes
-
-                return Ok(clientes);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erro ao obter clientes: {ex.Message}");
             }
         }
 

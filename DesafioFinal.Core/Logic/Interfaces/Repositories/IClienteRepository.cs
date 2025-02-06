@@ -15,6 +15,4 @@ namespace DesafioFinal.Core.Logic.Interfaces.Repositories
         Task<List<ClienteDto>> GetClientesByNameAsync(string nome);
         Task<int> GetTotalClientesAsync();
     }
-
-
 }
