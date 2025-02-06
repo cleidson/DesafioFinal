@@ -56,7 +56,7 @@ Isso irá subir todos os contêineres necessários para rodar a aplicação.
 
 ### **4️⃣ Acessar a API**
 A API estará disponível em:  
-🔗 `http://localhost:5000/swagger` (caso tenha Swagger configurado)
+🔗 `http://localhost:8081/swagger` (caso tenha Swagger configurado)
 
 ## 📌 Contribuição
 Caso queira contribuir com melhorias no projeto, siga os passos:
